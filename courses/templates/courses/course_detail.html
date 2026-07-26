@@ -1,38 +1,90 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
 
-<html>
-
-<head>
-
-<title>
+{% block title %}
 {{ course.title }}
-</title>
+{% endblock %}
 
-</head>
+{% block content %}
 
+<div class="row">
 
-<body>
+    <!-- Sidebar -->
+    <div class="col-md-4">
 
+        <div class="card">
 
-<h1>
-{{ course.title }}
-</h1>
+            <div class="card-header bg-primary text-white">
+                Lessons
+            </div>
 
+            <div class="list-group list-group-flush">
 
-<p>
-{{ course.description }}
-</p>
+                {% for lesson in lessons %}
 
+                <a
+                    href="{% url 'courses:lesson_detail' course.pk lesson.pk %}"
+                    class="list-group-item list-group-item-action"
+                >
+                    {{ lesson.order }}.
+                    {{ lesson.title }}
+                </a>
 
-<hr>
+                {% empty %}
 
+                <div class="list-group-item">
+                    No lessons yet.
+                </div>
 
-<a href="{% url 'courses:course_list' %}">
-Back To Courses
-</a>
+                {% endfor %}
 
+            </div>
 
-</body>
+        </div>
 
+    </div>
 
-</html>
+    <!-- Content -->
+    <div class="col-md-8">
+
+        <div class="card shadow-sm">
+
+            {% if course.thumbnail %}
+
+            <img
+                src="{{ course.thumbnail.url }}"
+                class="card-img-top">
+
+            {% endif %}
+
+            <div class="card-body">
+
+                <h2>
+
+                    {{ course.title }}
+
+                </h2>
+
+                <p>
+
+                    {{ course.description }}
+
+                </p>
+
+                <hr>
+
+                <a href="#"
+                   class="btn btn-success">
+
+                    ▶ Start First Lesson
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
