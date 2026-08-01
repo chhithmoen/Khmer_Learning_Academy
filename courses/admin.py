@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Course, Lesson
-
+from .models import Course, Lesson, Enrollment
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
@@ -15,7 +14,6 @@ class LessonAdmin(admin.ModelAdmin):
     list_display = (
         "title",
         "course",
-        "order",
     )
 
     list_filter = (
@@ -24,5 +22,16 @@ class LessonAdmin(admin.ModelAdmin):
 
     ordering = (
         "course",
-        "order",
     )
+
+
+admin.site.register(Enrollment)
+
+from .models import (
+    Course,
+    Lesson,
+    Enrollment,
+    LessonProgress,
+)
+
+admin.site.register(LessonProgress)

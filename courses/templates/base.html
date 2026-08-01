@@ -1,36 +1,57 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khmer Learning Academy</title>
 
-    <title>
-        {% block title %}
-        Khmer Learning Academy
-        {% endblock %}
-    </title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
 <body>
 
-{% include "includes/navbar.html" %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
 
-<div class="container py-5">
+        <a class="navbar-brand" href="/">Khmer Learning Academy</a>
 
-{% block content %}
+            <div class="navbar-nav ms-auto">
 
-{% endblock %}
+            <a class="nav-link" href="/">Home</a>
+
+                {% if user.is_authenticated %}
+
+                <a class="nav-link" href="/accounts/profile/">
+                    {{ user.username }}
+                </a>
+
+                <a class="nav-link" href="/accounts/logout/">
+                    Logout
+                </a>
+
+                {% else %}
+
+                <a class="nav-link" href="/accounts/login/">
+                    Login
+                </a>
+
+                <a class="nav-link" href="/accounts/register/">
+                    Register
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    {% block content %}
+
+    {% endblock %}
 
 </div>
-
-{% include "includes/footer.html" %}
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

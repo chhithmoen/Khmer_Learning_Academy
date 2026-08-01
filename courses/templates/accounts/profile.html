@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card shadow">
+    <div class="card-body">
+
+        <h2>Profile</h2>
+
+        <hr>
+
+        <h5>Username</h5>
+
+        <p>{{ request.user.username }}</p>
+
+    </div>
+</div>
+
+{% endblock %}

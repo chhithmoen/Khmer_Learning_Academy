@@ -21,10 +21,8 @@
 
                 {% for lesson in lessons %}
 
-                <a
-                    href="{% url 'courses:lesson_detail' course.pk lesson.pk %}"
-                    class="list-group-item list-group-item-action"
-                >
+                <a href="{% url 'courses:lesson_detail' course.pk lesson.pk %}"
+                    class="list-group-item list-group-item-action">
                     {{ lesson.order }}.
                     {{ lesson.title }}
                 </a>
@@ -36,6 +34,9 @@
                 </div>
 
                 {% endfor %}
+                <a href="{% url 'courses:enroll_course' course.pk %}" class="btn btn-success">
+                    Enroll Now
+                </a>
 
             </div>
 
@@ -50,9 +51,7 @@
 
             {% if course.thumbnail %}
 
-            <img
-                src="{{ course.thumbnail.url }}"
-                class="card-img-top">
+            <img src="{{ course.thumbnail.url }}" class="card-img-top">
 
             {% endif %}
 
@@ -72,8 +71,7 @@
 
                 <hr>
 
-                <a href="#"
-                   class="btn btn-success">
+                <a href="#" class="btn btn-success">
 
                     ▶ Start First Lesson
 

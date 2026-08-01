@@ -1,78 +1,158 @@
 {% extends "base.html" %}
 
+
 {% block title %}
 {{ lesson.title }}
 {% endblock %}
 
+
 {% block content %}
 
-<div class="row">
+<div class="container mt-4">
 
-    <!-- Sidebar -->
-    <div class="col-md-4">
+    <div class="row">
 
-        <div class="list-group">
 
-            {% for item in lessons %}
+        <!-- Lesson Sidebar -->
+        <div class="col-md-4">
 
-            <a
-                href="{% url 'courses:lesson_detail' course.pk item.pk %}"
-                class="list-group-item {% if item.pk == lesson.pk %}active{% endif %}">
+            <div class="card">
 
-                {{ item.order }}.
-                {{ item.title }}
+                <div class="card-header bg-primary text-white">
+                    📚 {{ course.title }}
+                </div>
 
-            </a>
 
-            {% endfor %}
+                <div class="list-group list-group-flush">
 
-        </div>
 
-    </div>
+                    {% for item in lessons %}
 
-    <!-- Content -->
-    <div class="col-md-8">
+                    <a href="{% url 'courses:lesson_detail' course.pk item.pk %}" class="list-group-item list-group-item-action 
+                       {% if item.pk == lesson.pk %}active{% endif %}">
 
-        <h2>
+                        Lesson {{ forloop.counter }}
 
-            {{ lesson.title }}
+                        <br>
 
-        </h2>
+                        {{ item.title }}
 
-        <hr>
+                    </a>
 
-        {% if lesson.video_url %}
 
-        <div class="alert alert-info">
+                    {% endfor %}
 
-            🎥 Video URL
 
-            <br><br>
-
-            <a
-                href="{{ lesson.video_url }}"
-                target="_blank">
-
-                {{ lesson.video_url }}
-
-            </a>
-
-        </div>
-
-        {% endif %}
-
-        <div class="card">
-
-            <div class="card-body">
-
-                {{ lesson.content|linebreaks }}
+                </div>
 
             </div>
 
+
         </div>
+
+
+
+
+
+        <!-- Lesson Content -->
+        <div class="col-md-8">
+
+
+            <div class="card">
+
+
+                <div class="card-body">
+
+
+                    <h2>
+                        {{ lesson.title }}
+                    </h2>
+
+
+                    <hr>
+
+
+
+                    <!-- Video -->
+                    {% if lesson.video_url %}
+
+                    <div class="alert alert-info">
+
+                        🎥 Video Lesson
+
+                        <br><br>
+
+
+                        <a href="{{ lesson.video_url }}" target="_blank" class="btn btn-primary">
+
+                            ▶ Watch Video
+
+                        </a>
+
+
+                    </div>
+
+                    {% endif %}
+
+
+
+
+
+                    <!-- Lesson Text -->
+
+                    <div class="mt-3">
+
+                        {{ lesson.content|linebreaks }}
+
+                    </div>
+
+
+
+
+
+                    <!-- Complete Button -->
+
+
+                    {% if progress and progress.completed %}
+
+
+                    <div class="alert alert-success mt-4">
+
+                        🎉 You completed this lesson!
+
+                    </div>
+
+
+                    {% else %}
+
+
+                    <a href="{% url 'courses:complete_lesson' course.pk lesson.pk %}" class="btn btn-success mt-4">
+
+                        ✅ Mark as Complete
+
+                    </a>
+
+
+                    {% endif %}
+
+
+
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
 
     </div>
 
+
 </div>
+
 
 {% endblock %}
