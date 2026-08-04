@@ -7,7 +7,7 @@ app_name = "courses"
 
 urlpatterns = [
 
-    # Course List Home Page
+    # Course List (Home)
     path(
         "",
         views.course_list,
@@ -15,7 +15,29 @@ urlpatterns = [
     ),
 
 
-    # User Dashboard
+    # Course Detail
+    path(
+        "course/<int:pk>/",
+        views.course_detail,
+        name="course_detail"
+    ),
+
+
+    # Lesson Detail
+    path(
+        "lesson/<int:pk>/",
+        views.lesson_detail,
+        name="lesson_detail"
+    ),
+
+    path(
+        "lesson/<int:pk>/complete/",
+        views.complete_lesson,
+        name="complete_lesson"
+    ),
+
+
+    # Student Dashboard
     path(
         "dashboard/",
         views.dashboard,
@@ -31,47 +53,17 @@ urlpatterns = [
     ),
 
 
-    # My Enrolled Courses
+    # My Courses
     path(
         "my-courses/",
         views.my_courses,
         name="my_courses"
     ),
 
-
-    # Enroll Course
-    path(
-        "enroll/<int:pk>/",
-        views.enroll_course,
-        name="enroll_course"
-    ),
-
-
-    # Course Detail
-    path(
-        "<int:pk>/",
-        views.course_detail,
-        name="course_detail"
-    ),
-
-
-    # Lesson Detail
-    path(
-        "<int:course_pk>/lesson/<int:lesson_pk>/",
-        views.lesson_detail,
-        name="lesson_detail"
-    ),
-
     path(
     "course/<int:pk>/enroll/",
     views.enroll_course,
-    name="enroll_course",
+    name="enroll_course"
     ),
-
-    path(
-    "lesson/<int:course_pk>/<int:lesson_pk>/complete/",
-    views.complete_lesson,
-    name="complete_lesson",
-),
 
 ]

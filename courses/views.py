@@ -1,39 +1,130 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Course, Lesson
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from .models import Course, Lesson, Enrollment
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+
+from .models import Course, Lesson, LessonProgress
+
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from django.shortcuts import redirect, get_object_or_404
 from .models import Course, Lesson, Enrollment
 
-@login_required
-def enroll_course(request, pk):
-    course = get_object_or_404(Course, pk=pk)
 
-    Enrollment.objects.get_or_create(
+# Home / Course List
+def course_list(request):
+
+    courses = Course.objects.all()
+
+    context = {
+        "courses": courses
+    }
+
+    return render(
+        request,
+        "courses/course_list.html",
+        context
+    )
+
+
+# Course Detail
+def course_detail(request, pk):
+
+    course = get_object_or_404(
+        Course,
+        id=pk
+    )
+
+    lessons = course.lessons.all()
+
+    enrolled = False
+
+    if request.user.is_authenticated:
+        enrolled = Enrollment.objects.filter(
+            student=request.user,
+            course=course
+        ).exists()
+
+
+    context = {
+        "course": course,
+        "lessons": lessons,
+        "enrolled": enrolled,
+    }
+
+
+    return render(
+        request,
+        "courses/course_detail.html",
+        context
+    )
+
+# Lesson Detail
+def lesson_detail(request, pk):
+
+    lesson = get_object_or_404(
+        Lesson,
+        id=pk
+    )
+
+    progress = None
+    if request.user.is_authenticated:
+        progress = LessonProgress.objects.filter(
+            student=request.user,
+            lesson=lesson,
+        ).first()
+
+    context = {
+        "course": lesson.course,
+        "lesson": lesson,
+        "lessons": lesson.course.lessons.all(),
+        "progress": progress,
+    }
+
+    return render(
+        request,
+        "courses/lesson_detail.html",
+        context
+    )
+
+
+@login_required
+def complete_lesson(request, pk):
+    """Mark a lesson as completed for the current user."""
+    if request.method != "POST":
+        return redirect("courses:lesson_detail", pk=pk)
+
+    lesson = get_object_or_404(Lesson, id=pk)
+    progress, _ = LessonProgress.objects.get_or_create(
         student=request.user,
-        course=course
+        lesson=lesson,
     )
 
-    return redirect("courses:course_detail", pk=pk)
+    if not progress.completed:
+        progress.completed = True
+        progress.completed_at = timezone.now()
+        progress.save(update_fields=["completed", "completed_at"])
 
-@login_required
+    return redirect("courses:lesson_detail", pk=lesson.pk)
+
+
+# Dashboard
 def dashboard(request):
+
     return render(
         request,
-        "courses/dashboard.html"
+        "dashboard.html"
     )
 
 
-@login_required
+# Profile
 def profile(request):
+
     return render(
         request,
-        "courses/profile.html"
+        "profile.html"
     )
 
 
+# My Courses
 @login_required
 def my_courses(request):
 
@@ -46,65 +137,16 @@ def my_courses(request):
         for enrollment in enrollments
     ]
 
+
+    context = {
+        "courses": courses
+    }
+
+
     return render(
         request,
         "courses/my_courses.html",
-        {
-            "courses": courses
-        }
-    )
-
-
-def course_list(request):
-    courses = Course.objects.all()
-
-    return render(
-        request,
-        "courses/course_list.html",
-        {
-            "courses": courses,
-        }
-    )
-
-
-def course_detail(request, pk):
-    course = get_object_or_404(Course, pk=pk)
-
-    lessons = course.lessons.all()
-
-    return render(
-        request,
-        "courses/course_detail.html",
-        {
-            "course": course,
-            "lessons": lessons,
-        }
-    )
-
-
-def lesson_detail(request, course_pk, lesson_pk):
-
-    course = get_object_or_404(
-        Course,
-        pk=course_pk
-    )
-
-    lesson = get_object_or_404(
-        Lesson,
-        pk=lesson_pk,
-        course=course
-    )
-
-    lessons = course.lessons.all()
-
-    return render(
-        request,
-        "courses/lesson_detail.html",
-        {
-            "course": course,
-            "lesson": lesson,
-            "lessons": lessons,
-        },
+        context
     )
 
 @login_required
@@ -112,44 +154,17 @@ def enroll_course(request, pk):
 
     course = get_object_or_404(
         Course,
-        pk=pk
+        id=pk
     )
+
 
     Enrollment.objects.get_or_create(
         student=request.user,
         course=course
     )
 
-    return redirect(
-    "courses:my_courses"
-    )
-from django.utils import timezone
-from .models import (
-    Course,
-    Lesson,
-    Enrollment,
-    LessonProgress,
-)
-
-@login_required
-def complete_lesson(request, course_pk, lesson_pk):
-    lesson = get_object_or_404(
-        Lesson,
-        pk=lesson_pk,
-        course_id=course_pk
-    )
-
-    progress, created = LessonProgress.objects.get_or_create(
-        student=request.user,
-        lesson=lesson
-    )
-
-    progress.completed = True
-    progress.completed_at = timezone.now()
-    progress.save()
 
     return redirect(
-        "courses:lesson_detail",
-        course_pk=course_pk,
-        lesson_pk=lesson_pk,
+        "courses:course_detail",
+        pk=course.id
     )

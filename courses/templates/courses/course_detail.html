@@ -4,85 +4,106 @@
 {{ course.title }}
 {% endblock %}
 
+
 {% block content %}
 
-<div class="row">
+<div class="container mt-5">
 
-    <!-- Sidebar -->
-    <div class="col-md-4">
+    <div class="row">
 
-        <div class="card">
-
-            <div class="card-header bg-primary text-white">
-                Lessons
-            </div>
-
-            <div class="list-group list-group-flush">
-
-                {% for lesson in lessons %}
-
-                <a href="{% url 'courses:lesson_detail' course.pk lesson.pk %}"
-                    class="list-group-item list-group-item-action">
-                    {{ lesson.order }}.
-                    {{ lesson.title }}
-                </a>
-
-                {% empty %}
-
-                <div class="list-group-item">
-                    No lessons yet.
-                </div>
-
-                {% endfor %}
-                <a href="{% url 'courses:enroll_course' course.pk %}" class="btn btn-success">
-                    Enroll Now
-                </a>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Content -->
-    <div class="col-md-8">
-
-        <div class="card shadow-sm">
+        <!-- Course Image -->
+        <div class="col-md-5">
 
             {% if course.thumbnail %}
-
-            <img src="{{ course.thumbnail.url }}" class="card-img-top">
-
+            <img src="{{ course.thumbnail.url }}" class="img-fluid rounded shadow" alt="{{ course.title }}">
+            {% else %}
+            <img src="https://via.placeholder.com/600x350" class="img-fluid rounded shadow">
             {% endif %}
-
-            <div class="card-body">
-
-                <h2>
-
-                    {{ course.title }}
-
-                </h2>
-
-                <p>
-
-                    {{ course.description }}
-
-                </p>
-
-                <hr>
-
-                <a href="#" class="btn btn-success">
-
-                    ▶ Start First Lesson
-
-                </a>
-
-            </div>
 
         </div>
 
+
+        <!-- Course Info -->
+        {% if user.is_authenticated %}
+
+        {% if enrolled %}
+
+        <button class="btn btn-success">
+            ✅ Already Enrolled
+        </button>
+
+        {% else %}
+
+        <a href="{% url 'courses:enroll_course' course.id %}" class="btn btn-primary">
+            🎓 Enroll Now
+        </a>
+
+        {% endif %}
+
+
+        {% else %}
+
+        <a href="/accounts/login/" class="btn btn-warning">
+            Login to Enroll
+        </a>
+
+        {% endif %}
     </div>
 
+
+    <hr class="my-5">
+
+
+    <!-- Lesson Section -->
+
+    <h2 class="mb-4">
+        📚 Course Lessons
+    </h2>
+
+
+    <div class="list-group">
+
+
+        {% for lesson in lessons %}
+
+        <a href="{% url 'courses:lesson_detail' lesson.id %}"
+            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+
+
+            <div>
+
+                <strong>
+                    Lesson {{ forloop.counter }}
+                </strong>
+
+                <br>
+
+                {{ lesson.title }}
+
+            </div>
+
+
+            <span class="badge bg-success rounded-pill">
+                Start
+            </span>
+
+
+        </a>
+
+
+        {% empty %}
+
+        <div class="alert alert-warning">
+            No lessons available yet.
+        </div>
+
+        {% endfor %}
+
+
+    </div>
+
+
 </div>
+
 
 {% endblock %}
